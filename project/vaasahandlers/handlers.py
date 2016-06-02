@@ -94,7 +94,7 @@ class TransactionHandler(BaseTransactionHandler):
         self.try_methods = [
             self.import_generic_transaction,
             self.import_holvi_transaction,
-            self.import_tmatch_transaction,
+            #self.import_tmatch_transaction,
         ]
         super().__init__(*args, **kwargs)
 
