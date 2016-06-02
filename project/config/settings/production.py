@@ -69,6 +69,11 @@ DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL',
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_SUBJECT_PREFIX = env("DJANGO_EMAIL_SUBJECT_PREFIX", default='[asylum] ')
 SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
+EMAIL_HOST = env("DJANGO_EMAIL_HOST", default='localhost')
+EMAIL_PORT = env("DJANGO_EMAIL_PORT", default='25')
+EMAIL_HOST_USER = env("DJANGO_EMAIL_USER", default='')
+EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_PASSWORD", default='')
+EMAIL_USE_TLS = env("DJANGO_EMAIL_TLS", default=False)
 
 # TEMPLATE CONFIGURATION
 # ------------------------------------------------------------------------------
