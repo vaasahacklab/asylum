@@ -150,10 +150,15 @@ else:
             'console': {
                 'class': 'logging.StreamHandler',
             },
+            'file': {
+                'level': 'INFO',
+                'class': 'logging.FileHandler',
+                'filename': ROOT_DIR+'logs/error.log',
+            },
         },
         'loggers': {
             'django': {
-                'handlers': ['console'],
+                'handlers': ['console',],
                 'level': env('DJANGO_LOG_LEVEL', default='INFO'),
             },
         },
