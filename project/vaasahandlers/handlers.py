@@ -11,6 +11,7 @@ from django.core.mail import EmailMessage
 from django.utils.translation import ugettext_lazy as _
 from holviapp.utils import api_configured, get_invoiceapi
 from members.handlers import BaseApplicationHandler, BaseMemberHandler
+from members.models import MemberType
 
 logger = logging.getLogger('vaasa.handlers')
 env = environ.Env()
@@ -34,6 +35,10 @@ class MemberHandler(BaseHandler):
 
 class ApplicationHandler(BaseHandler):
 
+    def on_saved(self, instance, *args, **kwargs):
+        instance.notes = "Auto approved"
+        instance.approve(MemberType.objects.all())
+
     def on_approving(self, application, member):
         msg = "on_approving called for %s" % application
         logger.info(msg)
@@ -54,7 +59,6 @@ class ApplicationHandler(BaseHandler):
 
         key_tag = env.int('VAASA_MONTH_TAG_PK', default=None)
         if membership_fee and membership_tag:
-            from creditor.models import RecurringTransaction, TransactionTag
             rt = RecurringTransaction()
             rt.tag = TransactionTag.objects.get(pk=membership_tag)
             rt.owner = member
@@ -65,7 +69,7 @@ class ApplicationHandler(BaseHandler):
                 rt.start = datetime.date(year=application.received.year + 1, month=1, day=1)
             rt.save()
             rt.conditional_add_transaction()
-        if application.monthlyPayment:
+        if application.monthlyPayment and key_tag:
             rtm = RecurringTransaction()
             rtm.tag = TransactionTag.objects.get(pk=key_tag)
             rtm.owner = member

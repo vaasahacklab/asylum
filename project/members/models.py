@@ -131,8 +131,6 @@ class MembershipApplication(MemberCommon):
 
     @call_saves('MEMBERAPPLICATION_CALLBACKS_HANDLER')
     def save(self, *args, **kwargs):
-        self.notes = "Auto approved"
-        self.approve(MemberType.objects.all())
         return super().save(*args, **kwargs)
 
     def validate_unique(self, exclude=None):
