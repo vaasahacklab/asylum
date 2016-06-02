@@ -151,6 +151,8 @@ class MembershipApplication(MemberCommon):
             m.email = self.email
             m.phone = self.phone
             m.nick = self.nick
+            m.monthlyPayment = self.monthlyPayment
+            m.paymentInterval = self.paymentInterval
 
             if h:
                 h.on_approving(self, m)
