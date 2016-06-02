@@ -170,6 +170,7 @@ class MembershipApplicationAdmin(VersionAdmin):
     actions = ['approve_selected']
     action_form = MembershipApplicationsForm
     search_fields = ['lname', 'fname', 'email', 'nick']
+    readonly_fields = ('monthlyPayment','paymentInterval',)
 
     def tags_formatted(self, obj):
         return ', '.join((x.label for x in obj.tags.all()))

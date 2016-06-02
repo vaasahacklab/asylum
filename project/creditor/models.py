@@ -12,6 +12,7 @@ from reversion import revisions
 
 from asylum.models import AsylumModel
 from asylum.utils import get_handler_instance
+from asylum.utils import add_months
 
 
 class TransactionTag(AsylumModel):
@@ -62,14 +63,17 @@ revisions.default_revision_manager.register(Transaction)
 class RecurringTransaction(AsylumModel):
     MONTHLY = 1
     YEARLY = 2
+    CUSTOM = 3
     RTYPE_READABLE = {
         MONTHLY: _("Monthly"),
         YEARLY: _("Yearly"),
+        CUSTOM: _("Custom"),
     }
     # Defined separately because we cannot do [ (x, RTYPE_READABLE[x]) for x in RTYPE_READABLE ]
     RTYPE_CHOICES = (
-        (MONTHLY, _("Monthly")),
-        (YEARLY, _("Yearly")),
+        (MONTHLY, RTYPE_READABLE[MONTHLY]),
+        (YEARLY, RTYPE_READABLE[YEARLY]),
+        (CUSTOM, RTYPE_READABLE[CUSTOM]),
     )
 
     start = models.DateField(_("Since"), db_index=True,  null=False, blank=False, default=timezone.now)
@@ -80,6 +84,7 @@ class RecurringTransaction(AsylumModel):
     tag = models.ForeignKey(TransactionTag, blank=False, verbose_name=_("Tag"), related_name='+')
     owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='+')
     amount = models.DecimalField(verbose_name=_("Amount"), max_digits=6, decimal_places=2, blank=False, null=False)
+    paymentInterval = models.IntegerField(verbose_name=_("Payment interval"),default=1, blank=True)
 
     def __str__(self):
         if self.label:
@@ -95,6 +100,9 @@ class RecurringTransaction(AsylumModel):
         elif self.rtype == RecurringTransaction.YEARLY:
             start = datetime.datetime(timescope.year, 1, 1)
             end = datetime.datetime(start.year, 12, calendar.monthrange(start.year, 12)[1])
+        elif self.rtype == RecurringTransaction.CUSTOM:
+            start = datetime.datetime(timescope.year, timescope.month, 1)
+            end = add_months(start,self.paymentInterval) - datetime.timedelta(days=1)
         else:
             raise NotImplementedError("Not implemented for %s (%d)" % (RecurringTransaction.RTYPE_READABLE[self.rtype], self.rtype))
         return (timezone.make_aware(start), timezone.make_aware(end))

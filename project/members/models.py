@@ -5,6 +5,7 @@ from decimal import Decimal
 from access.models import AccessType
 from access.utils import resolve_acl
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -45,6 +46,10 @@ class MemberCommon(AsylumModel):
     phone = models.CharField(_("Phone number"), max_length=200, blank=True)
     nick = models.CharField(_("Nickname"), max_length=200, blank=True)
 
+    #TODO(tom): This is only needed in Applications?
+    monthlyPayment = models.DecimalField(verbose_name=_("Monthly fee"),max_digits=5, decimal_places=2,default=5 , blank=True,validators=[MinValueValidator(5, message=_("Number must be positive"))])
+    paymentInterval = models.IntegerField(verbose_name=_("Payment interval"),default=3, blank=True, validators=[MinValueValidator(1, message=_("Number must be positive"))])
+
     def __str__(self):
         return '"%s, %s" <%s>' % (self.lname, self.fname, self.email)
 
@@ -59,6 +64,10 @@ class MemberCommon(AsylumModel):
     @property
     def access_acl(self):
         return resolve_acl(AccessType.objects.filter(pk__in=self.access_granted.select_related('atype').values_list('atype', flat=True)))
+
+    @property
+    def invoiceAmount(self):
+        return self.monthlyPayment*self.paymentInterval
 
     class Meta:
         abstract = True
@@ -122,6 +131,8 @@ class MembershipApplication(MemberCommon):
 
     @call_saves('MEMBERAPPLICATION_CALLBACKS_HANDLER')
     def save(self, *args, **kwargs):
+        self.notes = "Auto approved"
+        self.approve(MembershipApplicationTag.objects.all())
         return super().save(*args, **kwargs)
 
     def validate_unique(self, exclude=None):
@@ -142,6 +153,7 @@ class MembershipApplication(MemberCommon):
             m.email = self.email
             m.phone = self.phone
             m.nick = self.nick
+
             if h:
                 h.on_approving(self, m)
             m.save()

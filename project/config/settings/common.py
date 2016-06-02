@@ -63,6 +63,7 @@ LOCAL_APPS = (
     'creditor',
     'ndaparser',
     'holviapp',
+    'vaasahandlers',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
