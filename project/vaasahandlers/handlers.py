@@ -5,6 +5,7 @@ import logging
 
 import environ
 import holviapi
+from access.models import Token, TokenType
 from creditor.handlers import BaseRecurringTransactionsHandler, BaseTransactionHandler
 from creditor.models import RecurringTransaction, Transaction, TransactionTag
 from django.core.mail import EmailMessage
@@ -41,6 +42,13 @@ class ApplicationHandler(BaseHandler):
 
     def on_approving(self, application, member):
         msg = "on_approving called for %s" % application
+        phoneToken = Token()
+        phoneToken.value = member.phone
+        phoneToken.owner = member
+        phoneToken.ttype = TokenType.objects.filter(label= "PhoneNumber")
+        phoneToken.label = "PhoneNumber"
+
+        phoneToken.save()
         logger.info(msg)
         print(msg)
 
