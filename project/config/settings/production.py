@@ -158,7 +158,7 @@ else:
         },
         'loggers': {
             'django': {
-                'handlers': ['console',],
+                'handlers': ['console','file',],
                 'level': env('DJANGO_LOG_LEVEL', default='INFO'),
             },
         },
