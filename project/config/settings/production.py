@@ -153,7 +153,7 @@ else:
             'file': {
                 'level': 'INFO',
                 'class': 'logging.FileHandler',
-                'filename': ROOT_DIR+'logs/error.log',
+                'filename': '/var/log/asylum/error.log',
             },
         },
         'loggers': {
