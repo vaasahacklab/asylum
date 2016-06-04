@@ -5,7 +5,7 @@ import logging
 
 import environ
 import holviapi
-from access.models import Token, TokenType
+from access.models import Token, TokenType, Grant, AccessType
 from creditor.handlers import BaseRecurringTransactionsHandler, BaseTransactionHandler
 from creditor.models import RecurringTransaction, Transaction, TransactionTag
 from django.core.mail import EmailMessage
@@ -42,13 +42,11 @@ class ApplicationHandler(BaseHandler):
 
     def on_approving(self, application, member):
         msg = "on_approving called for %s" % application
-        phoneToken = Token()
-        phoneToken.value = member.phone
-        phoneToken.owner = member
-        phoneToken.ttype = TokenType.objects.filter(label= "PhoneNumber")
-        phoneToken.label = "PhoneNumber"
+        month_default_type_pk = env.int('VAASA_DEFAULT_MEMBER_TYPE_PK', default=None)
 
-        phoneToken.save()
+        if application.monthlymember and month_default_type_pk:
+            member.mtypes = month_default_type_pk
+            
         logger.info(msg)
         print(msg)
 
@@ -66,6 +64,9 @@ class ApplicationHandler(BaseHandler):
         membership_tag = env.int('VAASA_MEMBERSHIP_TAG_PK', default=None)
 
         key_tag = env.int('VAASA_MONTH_TAG_PK', default=None)
+        phone_token_pk = env.int('VAASA_PHONE_TOKEN_PK', default=1)
+        door_grant_pk = env.int('VAASA_DOOR_GRANT_PK', default=1)
+
         if membership_fee and membership_tag:
             rt = RecurringTransaction()
             rt.tag = TransactionTag.objects.get(pk=membership_tag)
@@ -77,7 +78,7 @@ class ApplicationHandler(BaseHandler):
                 rt.start = datetime.date(year=application.received.year + 1, month=1, day=1)
             rt.save()
             rt.conditional_add_transaction()
-        if application.monthlyPayment and key_tag:
+        if application.monthlyPayment and key_tag and application.monthlymember:
             rtm = RecurringTransaction()
             rtm.tag = TransactionTag.objects.get(pk=key_tag)
             rtm.owner = member
@@ -86,6 +87,17 @@ class ApplicationHandler(BaseHandler):
             rtm.paymentInterval = application.paymentInterval
             rtm.save()
             rtm.conditional_add_transaction()
+            memberGrant = Grant()
+            memberGrant.atype = AccessType.objects.get(pk=door_grant_pk)
+            memberGrant.owner = member
+
+
+        phoneToken = Token()
+        phoneToken.value = member.phone
+        phoneToken.owner = member
+        phoneToken.ttype = TokenType.objects.get(pk= phone_token_pk)
+        phoneToken.label = "PhoneNumber"
+        phoneToken.save()
 
         mailman_subscribe = env('VAASA_MAILMAN_SUBSCRIBE', default=None)
         if mailman_subscribe:
