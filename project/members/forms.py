@@ -17,6 +17,8 @@ rules_accepted_proxy = allow_lazy(rules_accepted_proxy, str)
 
 class ApplicationForm(forms.ModelForm):
     rules_accepted = forms.BooleanField(required=True, label=rules_accepted_proxy(_("I have read and accept <a href=\"%s\" target=\"_blank\">the rules</a>")))
+    monthlymember = forms.BooleanField(required=False, label=_("I want to apply for a monthly fee"),initial=True)
+
     required_css_class = 'required'
 
     class Meta:
@@ -28,6 +30,7 @@ class ApplicationForm(forms.ModelForm):
             'email',
             'phone',
             'nick',
+            'monthlymember',
             'monthlyPayment',
             'paymentInterval'
         ]

@@ -128,6 +128,7 @@ class MembershipApplication(MemberCommon):
     received = models.DateField(default=timezone.now)
     tags = models.ManyToManyField(MembershipApplicationTag, related_name='+', verbose_name=_("Application tags"), blank=True)
     notes = MarkdownField(verbose_name=_("Notes"), blank=True)
+    monthlymember = models.BooleanField(verbose_name=_("I want to apply for a monthly fee"),default=True)
 
     @call_saves('MEMBERAPPLICATION_CALLBACKS_HANDLER')
     def save(self, *args, **kwargs):
