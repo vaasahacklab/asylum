@@ -5,7 +5,7 @@ from decimal import Decimal
 from access.models import AccessType
 from access.utils import resolve_acl
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models, transaction
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -43,7 +43,9 @@ class MemberCommon(AsylumModel):
     lname = models.CharField(_("Last name"), max_length=200, blank=False)
     city = models.CharField(_("City of residence"), max_length=200, blank=False)
     email = models.EmailField(_("Email address"), unique=True, blank=False)
-    phone = models.CharField(_("Phone number"), max_length=200, blank=True)
+    phone_regex = RegexValidator(regex=r'^\+358\d{9}$',
+                                 message=_("Phone number must be entered in the format: '+358999999999'."))
+    phone = models.CharField(_("Phone number"), max_length=200, blank=True,validators=[phone_regex])
     nick = models.CharField(_("Nickname"), max_length=200, blank=True)
 
     #TODO(tom): This is only needed in Applications?
