@@ -31,3 +31,5 @@ class Command(BaseCommand):
                     print('Value: {0}, TypePK: {1}, Bits: {2}, Externals: {3}'.format(t.value, t.ttype.label, acl['bits'],
                                                                                       json.dumps(acl['externals'])))
         print(json.dumps(output_export))
+        with open(options['filepath'], 'w') as outfile:
+            json.dump(output_export, outfile)
