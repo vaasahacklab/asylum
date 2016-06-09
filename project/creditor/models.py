@@ -118,7 +118,7 @@ class RecurringTransaction(AsylumModel):
         scope_start = scope_start_ts.date()
         scope_end = scope_end_ts.date()
 
-        self.start <= scope_start and ((not self.end) or self.end >= scope_end)
+        return self.start <= scope_start and ((not self.end) or self.end >= scope_end)
 
         #return (self.start <= scope_end
         #        and (not self.end
