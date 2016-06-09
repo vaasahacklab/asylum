@@ -41,11 +41,13 @@ def generate_transaction_id():
 
 class Transaction(AsylumModel):
     stamp = models.DateTimeField(_("Datetime"), default=timezone.now, db_index=True)
+    endDate = models.DateField(_("End Date"), default=timezone.now, db_index=True)
     tag = models.ForeignKey(TransactionTag, blank=True, null=True, verbose_name=_("Tag"), related_name='+')
     reference = models.CharField(_("Reference"), max_length=200, blank=False, db_index=True)
     owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='creditor_transactions')
     amount = models.DecimalField(verbose_name=_("Amount"), max_digits=6, decimal_places=2, blank=False, null=False)
     unique_id = models.CharField(_("Unique transaction id"), max_length=64, blank=False, default=generate_transaction_id, unique=True)
+    rcreator = models.ForeignKey('creditor.RecurringTransaction', blank=True,null=True, verbose_name=_("Recurring Transaction"), related_name='creditor_transactions')
 
     def __str__(self):
         if self.tag:
@@ -130,7 +132,7 @@ class RecurringTransaction(AsylumModel):
         uid_source = self.make_uid_source(timescope)
         uid = hashlib.sha1(uid_source.encode('UTF-8')).hexdigest()
         qs = Transaction.objects.filter(
-            owner=self.owner, tag=self.tag, unique_id=uid, stamp__gte=start, stamp__lte=end
+            owner=self.owner, tag=self.tag, rcreator=self, endDate__gte=start, endDate__lte=end
         )
         if qs.count():
             return True
@@ -146,6 +148,8 @@ class RecurringTransaction(AsylumModel):
         t = Transaction()
         if timescope:
             t.stamp = timescope
+
+        start, end = self.resolve_timescope(timescope)
         h = get_handler_instance('RECURRINGTRANSACTIONS_CALLBACKS_HANDLER')
         t.tag = self.tag
         t.owner = self.owner
@@ -153,6 +157,8 @@ class RecurringTransaction(AsylumModel):
         t.unique_id = hashlib.sha1(uid_source.encode('UTF-8')).hexdigest()
         t.reference = uid_source
         t.amount = self.amount
+        t.endDate = end
+        t.creditor_transactions = self
         if h:
             if not h.on_creating(self, t):
                 return False
