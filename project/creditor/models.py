@@ -158,7 +158,7 @@ class RecurringTransaction(AsylumModel):
         t.reference = uid_source
         t.amount = self.amount
         t.endDate = end
-        t.creditor_transactions = self
+        t.rcreator = self
         if h:
             if not h.on_creating(self, t):
                 return False
