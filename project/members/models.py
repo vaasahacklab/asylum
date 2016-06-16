@@ -71,6 +71,10 @@ class MemberCommon(AsylumModel):
     def invoiceAmount(self):
         return self.monthlyPayment*self.paymentInterval
 
+    @property
+    def nameinitials(self):
+        return "%s.%s" % (self.fname[:1], self.lname[:1])
+
     class Meta:
         abstract = True
         ordering = ['lname', 'fname']

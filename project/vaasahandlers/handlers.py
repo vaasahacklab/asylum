@@ -46,7 +46,10 @@ class ApplicationHandler(BaseHandler):
 
         if application.monthlymember and month_default_type_pk:
             member.mtypes = month_default_type_pk
-            
+
+        if not application.nick:
+            member.nick = application.nameinitials
+
         logger.info(msg)
         print(msg)
 
