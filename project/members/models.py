@@ -49,8 +49,8 @@ class MemberCommon(AsylumModel):
     nick = models.CharField(_("Nickname"), max_length=200, blank=True)
 
     #TODO(tom): This is only needed in Applications?
-    monthlyPayment = models.DecimalField(verbose_name=_("Monthly fee"),max_digits=5, decimal_places=2,default=5 , blank=True,validators=[MinValueValidator(5, message=_("Number must be positive"))])
-    paymentInterval = models.IntegerField(verbose_name=_("Payment interval"),default=3, blank=True, validators=[MinValueValidator(1, message=_("Number must be positive"))])
+    monthlyPayment = models.DecimalField(verbose_name=_("Monthly fee"),max_digits=5, decimal_places=2,default=20 , blank=True,validators=[MinValueValidator(5, message=_("Number must be positive"))])
+    paymentInterval = models.IntegerField(verbose_name=_("Payment interval"),default=3, blank=True, validators=[MinValueValidator(1, message=_("Number must be more then 1"))])
 
     def __str__(self):
         return '"%s, %s" <%s>' % (self.lname, self.fname, self.email)
