@@ -93,6 +93,7 @@ class ApplicationHandler(BaseHandler):
             memberGrant = Grant()
             memberGrant.atype = AccessType.objects.get(pk=door_grant_pk)
             memberGrant.owner = member
+            memberGrant.save()
 
 
         phoneToken = Token()
