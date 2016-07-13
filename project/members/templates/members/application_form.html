@@ -14,3 +14,20 @@
     </form>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+  /* Disable payment details if payment is not selected */
+  $(document).ready(function() {
+    $('#id_monthlymember').change(function() {
+      if($(this).prop('checked')) {
+        $("#id_monthlyPayment").parent().show();
+        $("#id_paymentInterval").parent().show();
+      } else {
+        $("#id_monthlyPayment").parent().hide();
+        $("#id_paymentInterval").parent().hide();
+      }
+    });
+});
+</script>
+{% endblock %}
