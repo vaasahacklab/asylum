@@ -17,10 +17,10 @@ rules_accepted_proxy = allow_lazy(rules_accepted_proxy, str)
 
 class ApplicationForm(forms.ModelForm):
     rules_accepted = forms.BooleanField(required=True, label=rules_accepted_proxy(_("I have read and accept <a href=\"%s\" target=\"_blank\">the rules</a>")))
-    monthlymember = forms.BooleanField(required=False, label=_("I want to apply for a monthly fee"),initial=True)
+    monthlymember = forms.BooleanField(required=False, label=_("I want 24/7 access to hacklab and tools with monthly fee"),initial=True)
     phone = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': '+358403456789'}))
-    monthlyPayment = forms.CharField(label=_("I want to pay x€ per month"),widget=forms.TextInput(attrs={'placeholder': '20'}))
-    paymentInterval = forms.CharField(label=_("I want to an invoice every x months"),widget=forms.TextInput(attrs={'placeholder': '3'}),help_text=_("ex. 20€/mount every 3 months will give you an invoice of 60€ every 3 months"))
+    monthlyPayment = forms.CharField(label=_("Monthly fee"),initial='20',widget=forms.TextInput(attrs={'placeholder': '20'}),help_text=_("I want to pay this much per month"))
+    paymentInterval = forms.CharField(label=_("Payment interval"),initial='3',widget=forms.TextInput(attrs={'placeholder': '3'}),help_text=_("I wan't to have invoice every X months<br>ex. 20€/mount every 3 months will give you an invoice of 60€ every 3 months"))
 
     required_css_class = 'required'
 
