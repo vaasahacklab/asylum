@@ -10,6 +10,7 @@ from django.db import models, transaction
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_markdown.models import MarkdownField
+from phonenumber_field.modelfields import PhoneNumberField
 from reversion import revisions
 
 from asylum.models import AsylumModel
@@ -43,9 +44,7 @@ class MemberCommon(AsylumModel):
     lname = models.CharField(_("Last name"), max_length=200, blank=False)
     city = models.CharField(_("City of residence"), max_length=200, blank=False)
     email = models.EmailField(_("Email address"), unique=True, blank=False)
-    phone_regex = RegexValidator(regex=r'^\+358\d{9}$',
-                                 message=_("Phone number must be entered in the format: '+358999999999'."))
-    phone = models.CharField(_("Phone number"), max_length=200, blank=True,validators=[phone_regex])
+    phone = PhoneNumberField(_("Phone number"), blank=True)
     nick = models.CharField(_("Nickname"), max_length=200, blank=True)
 
     #TODO(tom): This is only needed in Applications?
