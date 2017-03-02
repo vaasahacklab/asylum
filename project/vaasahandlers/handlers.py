@@ -99,13 +99,13 @@ class ApplicationHandler(BaseHandler):
             memberGrant.owner = member
             memberGrant.save()
 
-        phoneToken = TokenType.objects.get(pk=phone_token_pk)
+        phoneTokenType = TokenType.objects.get(pk=phone_token_pk)
         if member.phone and \
-            not Token.objects.filter(value=member.phone, ttype=phoneToken).count():
+            not Token.objects.filter(value=member.phone, ttype=phoneTokenType).count():
             phoneToken = Token()
             phoneToken.value = member.phone
             phoneToken.owner = member
-            phoneToken.ttype = phoneToken
+            phoneToken.ttype = phoneTokenType
             phoneToken.label = "PhoneNumber"
             phoneToken.save()
 
