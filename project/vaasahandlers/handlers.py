@@ -80,7 +80,11 @@ class ApplicationHandler(BaseHandler):
             if application.received.month >= 10:
                 rt.start = datetime.date(year=application.received.year + 1, month=1, day=1)
             rt.save()
+            '''
+            We Don't want to send the transaction straight away.
+            This is handeled when cron runs
             rt.conditional_add_transaction()
+            '''
         if application.monthlyPayment and key_tag and application.monthlymember:
             rtm = RecurringTransaction()
             rtm.tag = TransactionTag.objects.get(pk=key_tag)
@@ -89,7 +93,11 @@ class ApplicationHandler(BaseHandler):
             rtm.rtype = RecurringTransaction.CUSTOM
             rtm.paymentInterval = application.paymentInterval
             rtm.save()
+            '''
+            We Don't want to send the transaction straight away.
+            This is handeled when cron runs
             rtm.conditional_add_transaction()
+            '''
             memberGrant = Grant()
             memberGrant.atype = AccessType.objects.get(pk=door_grant_pk)
             memberGrant.owner = member
