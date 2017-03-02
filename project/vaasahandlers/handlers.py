@@ -99,14 +99,16 @@ class ApplicationHandler(BaseHandler):
             memberGrant.owner = member
             memberGrant.save()
 
+        phoneToken = TokenType.objects.get(pk=phone_token_pk)
+        if member.phone and \
+            not Token.objects.filter(value=member.phone, ttype=phoneToken).count():
+            phoneToken = Token()
+            phoneToken.value = member.phone
+            phoneToken.owner = member
+            phoneToken.ttype = phoneToken
+            phoneToken.label = "PhoneNumber"
+            phoneToken.save()
 
-        phoneToken = Token()
-        phoneToken.value = member.phone
-        phoneToken.owner = member
-        phoneToken.ttype = TokenType.objects.get(pk= phone_token_pk)
-        phoneToken.label = "PhoneNumber"
-        phoneToken.save()
-        
         mail = EmailMessage()
         mail.to = [member.email, ]
         mail.subject = env("MEMBERSHIP_APPROVED_EMAIL_SUBJECT", default="Welcome to Vaasa Hacklab!")
