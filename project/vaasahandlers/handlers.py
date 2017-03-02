@@ -280,7 +280,7 @@ class RecurringTransactionsHolviHandler(BaseRecurringTransactionsHandler):
         if rt.rtype == RecurringTransaction.YEARLY:
             invoice.items[0].description = "%s %d" % (t.tag.label, year)
         elif rt.rtype == RecurringTransaction.CUSTOM:
-            invoice.items[0].description = "%s %02d/%d - %02d/%d, %d€ per month" % (t.tag.label, month, year, rt.end.month, rt.end.year, rt.owner.monthlyPayment)
+            invoice.items[0].description = "%s %02d/%d - %02d/%d, %d€ per month" % (t.tag.label, month, year, t.endDate.month, t.endDate.monthear, rt.owner.monthlyPayment)
         else:
             invoice.items[0].description = "%s %02d/%d" % (t.tag.label, month, year)
 
