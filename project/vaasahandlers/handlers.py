@@ -57,11 +57,6 @@ class ApplicationHandler(BaseHandler):
         msg = "on_approved called for %s" % application
         logger.info(msg)
         print(msg)
-        mail = EmailMessage()
-        mail.to = [member.email, ]
-        mail.subject = env("MEMBERSHIP_APPROVED_EMAIL_SUBJECT", default="Welcome to Vaasa Hacklab!")
-        mail.body = """Your membership has been approved, your member id is #%d""" % member.member_id
-        mail.send()
 
         # Auto-add the membership fee as recurring transaction
         membership_fee = env.float('VAASA_MEMBERSHIP_FEE', default=None)
@@ -111,6 +106,12 @@ class ApplicationHandler(BaseHandler):
         phoneToken.ttype = TokenType.objects.get(pk= phone_token_pk)
         phoneToken.label = "PhoneNumber"
         phoneToken.save()
+        
+        mail = EmailMessage()
+        mail.to = [member.email, ]
+        mail.subject = env("MEMBERSHIP_APPROVED_EMAIL_SUBJECT", default="Welcome to Vaasa Hacklab!")
+        mail.body = """Your membership has been approved, your member id is #%d""" % member.member_id
+        mail.send()
 
         mailman_subscribe = env('VAASA_MAILMAN_SUBSCRIBE', default=None)
         if mailman_subscribe:
