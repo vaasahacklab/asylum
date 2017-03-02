@@ -59,6 +59,7 @@ class ApplicationHandler(BaseHandler):
         print(msg)
         mail = EmailMessage()
         mail.to = [member.email, ]
+        mail.subject = env("MEMBERSHIP_APPROVED_EMAIL_SUBJECT", default="Welcome to Vaasa Hacklab!")
         mail.body = """Your membership has been approved, your member id is #%d""" % member.member_id
         mail.send()
 
