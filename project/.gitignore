@@ -70,3 +70,10 @@ node_modules/
 
 # User-uploaded media
 asylum/media/
+
+# Backup of database
+database_backup.sql.gz
+
+#UWSGI reload
+reload
+
