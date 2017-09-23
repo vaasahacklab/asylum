@@ -1,8 +1,8 @@
+# Everyone should keep their own configs
+.idea
 # OSX stuff
 ._*
 .DS_Store
-
-#idefiles
-.idea
-
 venv/
+*_backup.*.gz
+*.sql.gz
