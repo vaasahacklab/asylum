@@ -53,3 +53,7 @@ if settings.DEBUG:
         url(r'^404/$', default_views.page_not_found),
         url(r'^500/$', default_views.server_error),
     ]
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]
