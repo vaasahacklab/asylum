@@ -35,6 +35,26 @@ class MemberHandler(BaseHandler):
 
 
 class ApplicationHandler(BaseHandler):
+    fresh_emails = {}
+
+    def on_saving(self, instance, *args, **kwargs):
+        """Called just before passing control to save()"""
+        if not instance.pk:
+            self.fresh_emails[instance.email] = True
+
+    def on_saved(self, instance, *args, **kwargs):
+        """Called after save() returns"""
+        if instance.email in self.fresh_emails:
+            # Just created
+            del(self.fresh_emails[instance.email])
+            mail = EmailMessage()
+            mail.from_email = '"%s" <%s>' % (instance.name, instance.email)
+            mail.to = ["info@vaasa.hacklab.fi", ]
+            mail.subject = "Jäsenhakemus: %s" % instance.name
+            mail.body = "Uusi hakemus Lataamossa: https://lataamo.vaasa.hacklab.fi/admin/members/membershipapplication/%d/" % instance.pk
+            mail.send()
+        pass
+
     def on_approving(self, application, member):
         msg = "on_approving called for %s" % application
         month_default_type_pk = env.int('VAASA_DEFAULT_MEMBER_TYPE_PK', default=None)
