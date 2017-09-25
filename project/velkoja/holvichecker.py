@@ -2,6 +2,7 @@
 import logging
 from decimal import Decimal
 
+import logger as logger
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template import Context
