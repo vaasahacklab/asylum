@@ -17,8 +17,8 @@ from members.models import MemberType
 logger = logging.getLogger('vaasa.handlers')
 env = environ.Env()
 
-class BaseHandler(BaseMemberHandler):
 
+class BaseHandler(BaseMemberHandler):
     def on_saving(self, instance, *args, **kwargs):
         msg = "on_saving called for %s %s" % (type(instance), instance)
         logger.info(msg)
@@ -35,11 +35,6 @@ class MemberHandler(BaseHandler):
 
 
 class ApplicationHandler(BaseHandler):
-
-    def on_saved(self, instance, *args, **kwargs):
-        instance.notes = "Auto approved"
-        instance.approve(MemberType.objects.all())
-
     def on_approving(self, application, member):
         msg = "on_approving called for %s" % application
         month_default_type_pk = env.int('VAASA_DEFAULT_MEMBER_TYPE_PK', default=None)
@@ -85,7 +80,7 @@ class ApplicationHandler(BaseHandler):
             rtm = RecurringTransaction()
             rtm.tag = TransactionTag.objects.get(pk=key_tag)
             rtm.owner = member
-            rtm.amount = -application.monthlyPayment*application.paymentInterval
+            rtm.amount = -application.monthlyPayment * application.paymentInterval
             rtm.rtype = RecurringTransaction.CUSTOM
             rtm.paymentInterval = application.paymentInterval
             rtm.save()
@@ -126,7 +121,6 @@ class ApplicationHandler(BaseHandler):
 
 
 class TransactionHandler(BaseTransactionHandler):
-
     def __init__(self, *args, **kwargs):
         # We have to do this late to avoid problems with circular imports
         from members.models import Member
@@ -134,7 +128,7 @@ class TransactionHandler(BaseTransactionHandler):
         self.try_methods = [
             self.import_generic_transaction,
             self.import_holvi_transaction,
-            #self.import_tmatch_transaction,
+            # self.import_tmatch_transaction,
         ]
         super().__init__(*args, **kwargs)
 
@@ -244,7 +238,6 @@ class TransactionHandler(BaseTransactionHandler):
 
 
 class RecurringTransactionsHolviHandler(BaseRecurringTransactionsHandler):
-
     def on_creating(self, rt, t, *args, **kwargs):
         import holviapi
         import holviapi.utils
@@ -280,13 +273,15 @@ class RecurringTransactionsHolviHandler(BaseRecurringTransactionsHandler):
         if rt.rtype == RecurringTransaction.YEARLY:
             invoice.items[0].description = "%s %d" % (t.tag.label, year)
         elif rt.rtype == RecurringTransaction.CUSTOM:
-            invoice.items[0].description = "%s %02d/%d - %02d/%d, %d€ per month" % (t.tag.label, month, year, t.endDate.month, t.endDate.year, rt.owner.monthlyPayment)
+            invoice.items[0].description = "%s %02d/%d - %02d/%d, %d€ per month" % (
+            t.tag.label, month, year, t.endDate.month, t.endDate.year, rt.owner.monthlyPayment)
         else:
             invoice.items[0].description = "%s %02d/%d" % (t.tag.label, month, year)
 
         invoice.items[0].net = -t.amount  # Negative amount transaction -> positive amount invoice
         if t.tag.holvi_code:
-            invoice.items[0].category = holviapi.IncomeCategory(invoice.api.categories_api, {'code': t.tag.holvi_code})  # Lazy-loading category, avoids a GET
+            invoice.items[0].category = holviapi.IncomeCategory(invoice.api.categories_api, {
+                'code': t.tag.holvi_code})  # Lazy-loading category, avoids a GET
         invoice.subject = "%s / %s" % (invoice.items[0].description, invoice.receiver.name)
 
         invoice = invoice.save()
