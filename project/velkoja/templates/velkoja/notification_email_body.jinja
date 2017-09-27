@@ -30,6 +30,8 @@ Description: {{ invoice.subject }}
 Due date: {{ invoice.due_date.isoformat }}
 Reference: {{ invoice.rf_reference }}
 Amount due: {{ invoice.due_sum }}{{ invoice.currency }}
+IBAN: FI7979977997402818
+BIC: HOLVFIHH
 
 {% if barcode %}
 Virtual barcode: {{ barcode }}
