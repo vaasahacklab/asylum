@@ -48,7 +48,7 @@ class ApplicationHandler(BaseHandler):
             # Just created
             del(self.fresh_emails[instance.email])
             mail = EmailMessage()
-            mail.from_email = '"%s" <%s>' % (instance.name, instance.email)
+            mail.from_email = '"%s" <%s>' % (instance.name, "no-replay@vaasa.hacklab.fi")
             mail.to = ["info@vaasa.hacklab.fi", ]
             mail.subject = "Jäsenhakemus: %s" % instance.name
             mail.body = "Uusi hakemus Lataamossa: https://lataamo.vaasa.hacklab.fi/admin/members/membershipapplication/%d/" % instance.pk
