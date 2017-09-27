@@ -8,6 +8,8 @@ Kuvaus: {{ invoice.subject }}
 Eräpäivä: {{ invoice.due_date.isoformat }}
 Viite: {{ invoice.rf_reference }}
 Summa: {{ invoice.due_sum }}{{ invoice.currency }}
+IBAN: FI7979977997402818
+BIC: HOLVFIHH
 
 {% if barcode %}
 Virtuaaliviivakoodi: {{ barcode }}
