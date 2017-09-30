@@ -1,6 +1,6 @@
 # asylum
 
-Membership management for hacklabs. uses Python 3.4.
+Membership management for hacklabs. uses Python 3.
 
 Uses django-environ for configurations, you can create `.env`-file in your project dir to override settings.
 
@@ -51,7 +51,7 @@ See also "Updating upstream changes".
 Fork the repo on github and use you local fork as checkout source, you will want to add your own modules
 with custom callbacks for automating things like mailing list subscriptions for new members
 
-For Debian Jessie 8.0
+For Debian Stretch 9
 
   - Make sure your're using UTF-8 locale
     - `sudo locale-gen en_US.UTF-8 ; export LC_ALL=en_US.UTF-8`
@@ -68,13 +68,13 @@ sudo apt-get install -y nodejs</code></pre>
   - `xargs -a <(awk '/^\s*[^#]/' "requirements.apt") -r -- sudo apt-get install` Installs all packages listed in requirements.apt
   - `sudo pip install maildump` currently not python3 compatible due to broken package, only needed if you're going to run in development mode
   - `` virtualenv -p `which python3` venv && source venv/bin/activate ``
-    - Note: this might not work. If it doesn't, try `virtualenv-3.4`.
-      If you don't have `virtualenv-3.4`, you might need to install it (`sudo pip3.4 install virtualenv`).
+    - Note: this might not work. If it doesn't, try `virtualenv-3.5`.
+      If you don't have `virtualenv-3.5`, you might need to install it (`sudo pip3 install virtualenv`).
       If the installation command fails, you'll have to bootstrap pip for your python3 installation (`wget https://bootstrap.pypa.io/get-pip.py && sudo python3 get-pip.py`).
       Good luck.
   - `pip install -r requirements/local.txt` (or `pip install -r requirements/production.txt` if installing on production)
   - Create the postgres database
-    - `sudo apt-get install postgresql-9.4` this is not in requirements.apt since you might want to use a dedicated postgres host.
+    - `sudo apt-get install postgresql-9.6` this is not in requirements.apt since you might want to use a dedicated postgres host.
     - `sudo su - postgres`
     - `createuser asylum && createdb -E utf-8 -T template0 -O asylum asylum && psql -U postgres -d postgres -c "alter user asylum with password 'asylum';"`
       - Change at least the password,in createdb `-O asylum` is the user that owns the database.
