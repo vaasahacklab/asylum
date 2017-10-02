@@ -294,7 +294,7 @@ class RecurringTransactionsHolviHandler(BaseRecurringTransactionsHandler):
             invoice.items[0].description = "%s %d" % (t.tag.label, year)
         elif rt.rtype == RecurringTransaction.CUSTOM:
             invoice.items[0].description = "%s %02d/%d - %02d/%d, %d€ per month" % (
-            t.tag.label, month, year, t.endDate.month, t.endDate.year, rt.amount/rt.paymentInterval)
+            t.tag.label, month, year, t.endDate.month, t.endDate.year, -rt.amount/rt.paymentInterval) # Negative amount transaction -> positive amount invoice
         else:
             invoice.items[0].description = "%s %02d/%d" % (t.tag.label, month, year)
 
